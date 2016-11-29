@@ -1,0 +1,20 @@
+{
+  "name": "d3-chart",
+  "homepage": "https://github.com/ifalldev/d3-chart",
+  "authors": [
+    "ifalldev <cbatista.93@gmail.com>"
+  ],
+  "description": "wheel of life",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "^4.4.0"
+  }
+}
