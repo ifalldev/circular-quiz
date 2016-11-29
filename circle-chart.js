@@ -19,16 +19,17 @@ const band = function(center, minRadius, maxRadius, bandNo) {
 
 const width  = 500 - margin.right - margin.left;
 const height = 500 - margin.top - margin.bottom;
+const bandSize = 100 / 6;
 
 const radius = width / 2;
 
 const data = [
-  { name: 'Atividade', count: 20 },
-  { name: 'Visita', count: 10 },
-  { name: 'Arroz', count: 10 },
-  { name: 'Esfirra', count: 20 },
-  { name: 'Naruto', count: 30 },
-  { name: 'KingKingz', count: 10 },
+  { name: 'Atividade', count: bandSize },
+  { name: 'Visita', count: bandSize },
+  { name: 'Arroz', count: bandSize },
+  { name: 'Esfirra', count: bandSize },
+  { name: 'Naruto', count: bandSize },
+  { name: 'KingKingz', count: bandSize },
 ];
 
 let arc = d3.arc()
