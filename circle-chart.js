@@ -47,14 +47,9 @@ let svg = d3.select('body').append('svg')
       .append('g')
       .attr('transform', 'translate(' +  width / 2 + ',' + height / 2 + ')');
 
-data.forEach(d => {
-  console.log(d);
-
-});
-
 const g = svg.selectAll('.arc')
       .data(pie(data))
       .enter().append('g')
       .attr('class', 'arc');
 
-g.append('path').attr('d', arc).style('fill', 'blue');
+g.append('path').attr('d', arc).style('fill', 'red');
