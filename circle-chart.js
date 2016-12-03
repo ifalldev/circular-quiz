@@ -37,7 +37,7 @@ const color = d3.scaleOrdinal()
 
 let arc = d3.arc()
       .outerRadius(radius - 10)
-      .innerRadius(0);
+      .innerRadius(120);
       // .startAngle(180)
       // .endAngle((Math.PI * 2) / 6);
 
