@@ -24,18 +24,21 @@ const bandSize = 100 / 6;
 const radius = width / 2;
 
 const data = [
-  { name: 'Atividade', count: bandSize },
-  { name: 'Visita', count: bandSize },
-  { name: 'Arroz', count: bandSize },
-  { name: 'Esfirra', count: bandSize },
-  { name: 'Naruto', count: bandSize },
-  { name: 'KingKingz', count: bandSize },
+  { id: 0, name: 'Atividade', count: bandSize },
+  { id: 1, name: 'Visita', count: bandSize },
+  { id: 2, name: 'Arroz', count: bandSize },
+  { id: 3, name: 'Esfirra', count: bandSize },
+  { id: 4, name: 'Naruto', count: bandSize },
+  { id: 5, name: 'KingKingz', count: bandSize },
 ];
+
+const color = d3.scaleOrdinal()
+      .range(['blue', 'yellow', 'red', 'green', 'indigo', 'violet']);
 
 let arc = d3.arc()
       .outerRadius(radius - 10)
       .innerRadius(0);
-      // .startAngle(0)
+      // .startAngle(180)
       // .endAngle((Math.PI * 2) / 6);
 
 let pie = d3.pie()
@@ -53,4 +56,4 @@ const g = svg.selectAll('.arc')
       .enter().append('g')
       .attr('class', 'arc');
 
-g.append('path').attr('d', arc).style('fill', 'red');
+g.append('path').attr('d', arc).style('fill', d => color(d.data.id));
