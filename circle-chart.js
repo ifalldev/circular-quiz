@@ -1,37 +1,70 @@
-const margin = {
-  top: 20,
-  right: 20,
-  left: 20,
-  bottom: 20,
-};
+// const margin = {
+//   top: 20,
+//   right: 20,
+//   left: 20,
+//   bottom: 20,
+// };
 
-const point = function(x, y) {
-  this.x = x;
-  this.y = y;
-};
-
-const band = function(center, minRadius, maxRadius, bandNo) {
-  this.center    = center;
-  this.minRadius = minRadius;
-  this.maxRadius = maxRadius;
-  this.bandNo    = bandNo;
-};
-
-const width  = 500 - margin.right - margin.left;
-const height = 500 - margin.top - margin.bottom;
-const bandSize = 100 / 6;
-const radius = width / 2;
+const width     = 500;
+const height    = 500;
+const bandSize  = 100 / 6;
+const maxRadius = width / 2;
 
 const multilevelChart = [];
 const color = d3.scaleOrdinal(d3.schemeCategory20);
 
 const data = [
-  { id: 0, name: 'Atividade', count: bandSize },
-  { id: 1, name: 'Visita', count: bandSize },
-  { id: 2, name: 'Arroz', count: bandSize },
-  { id: 3, name: 'Esfirra', count: bandSize },
-  { id: 4, name: 'Naruto', count: bandSize },
-  { id: 5, name: 'KingKingz', count: bandSize },
+    { "nodeData": {
+            "age": "<5",
+            "population": bandSize
+        },
+        "subData": [{
+            "nodeData": {
+                "age": "<5",
+                "population": bandSize
+            },
+            "subData": [{
+                "nodeData": {
+                    "age": "<5",
+                    "population": bandSize
+                }
+            }]
+        }]
+    },
+    { "nodeData": {
+            "age": "6",
+            "population": bandSize
+        },
+        "subData": [{
+            "nodeData": {
+                "age": "6",
+                "population": bandSize
+            },
+            "subData": [{
+                "nodeData": {
+                    "age": "6",
+                    "population": bandSize
+                }
+            }]
+        }]
+    },
+    { "nodeData": {
+            "age": "7",
+            "population": bandSize
+        },
+        "subData": [{
+            "nodeData": {
+                "age": "7",
+                "population": bandSize
+            },
+            "subData": [{
+                "nodeData": {
+                    "age": "7",
+                    "population": bandSize
+                }
+            }]
+        }]
+    },
 ];
 
 let svg = d3.select('body').append('svg')
@@ -41,11 +74,11 @@ let svg = d3.select('body').append('svg')
         .attr('transform', 'translate(' +  width / 2 + ',' + height / 2 + ')');
 
 const setMultilevelChart = function(data) {
-  if(!data) return false;
+  if(!data) return;
 
   let level   = data.length;
   let counter = 0;
-  let index   = 0;
+  // let index   = 0;
   let currentLevelData = [];
   let queue = [];
 
@@ -57,24 +90,55 @@ const setMultilevelChart = function(data) {
     let node = queue.shift();
     currentLevelData.push(node);
     level--;
+
+    if(node.subData) {
+      for(let i = 0; i < node.subData.length; i++) {
+        queue.push(node.subData[i]);
+        counter ++;
+      }
+    }
+
+    if (level < 1) {
+      level            = counter;
+      counter          = 0;
+
+      multilevelChart.push(currentLevelData);
+      currentLevelData = [];
+    }
   }
 };
 
-const drawChart = function(_data) {
-  let arc = d3.arc()
-        .outerRadius(radius - 10)
-        .innerRadius(120);
-
+const drawChart = function(_data, index) {
+  // console.log('chart data', _data);
   let pie = d3.pie()
         .sort(null)
-        .value(d => d.count);
+        .value(d => d.nodeData.population);
 
-  const g = svg.selectAll('.arc')
+  let arc = d3.arc()
+        .outerRadius((index + 1) * pieWidth - 1)
+        .innerRadius(index * pieWidth);
+
+  const g = svg.selectAll('.arc' + index)
         .data(pie(_data))
         .enter().append('g')
-        .attr('class', 'arc');
+        .attr('class', 'arc' + index);
 
-  g.append('path').attr('d', arc).style('fill', d => color(d.data.id));
+  g.append('path').attr('d', arc).style('fill', d => color(d.data.nodeData.age));
+
+  g.append('text').attr('transform', d => 'translate(' + arc.centroid(d) + ')')
+    .attr('dy', '.35em').style('text-anchor', 'middle')
+    .text(d => d.data.nodeData.age);
 };
 
-drawChart(data);
+setMultilevelChart(data);
+const pieWidth  = parseInt(maxRadius / multilevelChart.length) - multilevelChart.length;
+
+MLC = multilevelChart;
+for(let i = 0; i < multilevelChart.length; i++) {
+  const _cData = multilevelChart[i];
+  drawChart(_cData, i);
+}
+
+// data.forEach(d => drawChart([d]));
+
+// drawChart(data);

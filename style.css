@@ -12,3 +12,8 @@
 .arc2 path {
   stroke: #fff;
 }
+
+path {
+  stroke: #fff;
+  stroke-width: 1px;
+}
