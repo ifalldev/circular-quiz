@@ -1,25 +1,22 @@
 multiLevelCircleChart = function(bandList, bandNivel) {
-  const width     = 500;
-  const height    = 500;
-  const bandSize  = 100 / 6;
-  const maxRadius = width / 2;
-  const rtn = {};
+  const width      = 500;
+  const height     = 500;
+  const bandLength = bandList.length;
+  const bandSize   = 100 / bandLength;
+  const maxRadius  = width / 2;
+  const color      = d3.scaleOrdinal(d3.schemeCategory20c);
+  const rtn        = {};
   let pieWidth;
-  let svg;
-
-  const color = d3.scaleOrdinal(d3.schemeCategory20);
-
-  // const bandList  = ['naruto', 'gatos', 'inalador', 'latinha', 'cinzeiro', 'ipad'];
-  // const bandNivel = 5;
+  let svg = d3.select('body').append('svg')
+      .attr('width', 800)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', 'translate(' +  380 + ',' + height / 2 + ')');
   let multilevelChart = [];
 
-  // let svg = d3.select('body').append('svg')
-  //         .attr('width', width)
-  //         .attr('height', height)
-  //         .append('g')
-  //         .attr('transform', 'translate(' +  width / 2 + ',' + height / 2 + ')');
-
-  const setMultilevelChart = function(list) {
+  // PRODUZ O ARRAY QUE CONTEM TODOS OS NIVEIS DO GRAFICO
+  // (cada item do array eh um arco completo)
+  this.setMultilevelChart = function(list) {
     for (let i = 0; i < bandNivel; i++) {
       const layer = [];
       let id = 0;
@@ -30,9 +27,11 @@ multiLevelCircleChart = function(bandList, bandNivel) {
       multilevelChart.push(layer);
     }
   };
-
-  const drawChart = function(_data, index) {
-    let pie = d3.pie()
+  this.setMultilevelChart(bandList);
+  pieWidth  = parseInt(maxRadius / multilevelChart.length) - multilevelChart.length;
+  // CONSTROI UM NIVEL(ARCO/DONUT CHART) DO GRAFICO
+  this.drawChart = function(_data, index) {
+    this.pie = d3.pie()
           .sort(null)
           .value(() => bandSize);
 
@@ -40,37 +39,49 @@ multiLevelCircleChart = function(bandList, bandNivel) {
           .outerRadius((index + 1) * pieWidth - 1)
           .innerRadius(index * pieWidth);
 
-    const g = svg.selectAll('.arc' + index)
-          .data(pie(_data))
+    this.g = svg.selectAll('.arc' + index)
+          .data(this.pie(_data))
           .enter().append('g')
           .attr('class', 'arc' + index);
 
-    g.append('path').attr('d', arc).style('fill', d => color(d.data.id));
+    this.g.append('path').attr('d', arc).style('fill', d => color(d.data.id));
 
-    g.append('text').attr('transform', d => 'translate(' + arc.centroid(d) + ')')
+    this.g.append('text').attr('transform', d => 'translate(' + arc.centroid(d) + ')')
       .attr('dy', '.35em').style('text-anchor', 'middle')
       .text(() => index + 1);
   };
+  this.addTextLabel = function() {
+    let labelArc = d3.arc()
+              .outerRadius(maxRadius + 10 )
+              .innerRadius(maxRadius);
 
-  rtn.create = function() {
-     svg = d3.select('body').append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .append('g')
-      .attr('transform', 'translate(' +  width / 2 + ',' + height / 2 + ')');
+    this.g = svg.selectAll('.arcLabel')
+          .data(this.pie(bandList))
+          .enter().append('g')
+          .attr('class', 'arcLabel');
 
-    setMultilevelChart(bandList);
-    pieWidth  = parseInt(maxRadius / multilevelChart.length) - multilevelChart.length;
-
-    for(let i = 0; i < multilevelChart.length; i++) {
-      console.log(multilevelChart[i]);
-      const _cData = multilevelChart[i];
-      drawChart(_cData, i);
-    }
+    this.g.append('text')
+        .attr('transform', d => 'translate(' + labelArc.centroid(d) + ')')
+        .attr('dy', '.35em')
+        .attr('dx', '-1.5em')
+        .text(d => d.data);
   };
 
-  rtn.remove = function() {
-    $('svg').remove();
+  rtn.create = () => {
+    for(let i = 0; i < multilevelChart.length; i++) {
+      const _cData = multilevelChart[i];
+      this.drawChart(_cData, i);
+    }
+    
+    this.addTextLabel();
+
+    // for(let i = 0; i < bandLength; i++) {
+
+    // }
+  };
+
+  rtn.remove = () => {
+    $('g').remove();
 
     multilevelChart = [];
   };
