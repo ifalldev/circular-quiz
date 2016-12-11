@@ -50,21 +50,46 @@ multiLevelCircleChart = function(bandList, bandNivel) {
       .attr('dy', '.35em').style('text-anchor', 'middle')
       .text(() => index + 1);
   };
-  this.addTextLabel = function() {
-    let labelArc = d3.arc()
-              .outerRadius(maxRadius + 10 )
-              .innerRadius(maxRadius);
 
-    this.g = svg.selectAll('.arcLabel')
-          .data(this.pie(bandList))
+  this.drawTextChart = function(outRadius, inRadius, titles, index) {
+    let labelArc = d3.arc()
+              .outerRadius(outRadius)
+              .innerRadius(inRadius);
+
+    const g = svg.selectAll('.arcLabel' + index)
+          .data(this.pie(titles))
           .enter().append('g')
           .attr('class', 'arcLabel');
 
-    this.g.append('text')
+    g.append('text')
         .attr('transform', d => 'translate(' + labelArc.centroid(d) + ')')
         .attr('dy', '.35em')
         .attr('dx', '-1.5em')
         .text(d => d.data);
+  };
+
+
+  this.addTextLabel = function() {
+    const arBandList    = [];
+    const arMultiLineTexts = [];
+    const multiLineTexts = function(item, index) {
+      if(!arMultiLineTexts[index]) arMultiLineTexts[index] = [];
+
+      arMultiLineTexts[index].push(item);
+    };
+    // PROCURA POR QUEBRA DE LINHA
+    bandList.map(x => arBandList.push(x.split('\n')));
+    // AGRUPA AS LINHAS POR SUA ORDEM, EX:
+    // array[0] = TODAS AS PRIMEIRAS LINHAS
+    arBandList.map(x => x.map((i, j) => multiLineTexts(i, j)));
+
+    rtn.arBandList = arBandList;
+    rtn.arMultiLineTexts = arMultiLineTexts;
+
+    arMultiLineTexts.forEach((i, j) => {
+      console.log('creating labels', i, j);
+      this.drawTextChart(maxRadius + 10 * (j + 2), maxRadius, i, j);
+    });
   };
 
   rtn.create = () => {
@@ -85,6 +110,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
 
     multilevelChart = [];
   };
+  rtn.bandList = bandList;
 
   return rtn;
 };
