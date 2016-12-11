@@ -9,9 +9,9 @@ multiLevelCircleChart = function(bandList, bandNivel) {
   let pieWidth;
   let svg = d3.select('body').append('svg')
       .attr('width', 800)
-      .attr('height', height)
+      .attr('height', 800)
       .append('g')
-      .attr('transform', 'translate(' +  380 + ',' + height / 2 + ')');
+      .attr('transform', 'translate(' +  380 + ',' + 350 + ')');
   let multilevelChart = [];
 
   // PRODUZ O ARRAY QUE CONTEM TODOS OS NIVEIS DO GRAFICO
@@ -51,20 +51,20 @@ multiLevelCircleChart = function(bandList, bandNivel) {
       .text(() => index + 1);
   };
 
-  this.drawTextChart = function(outRadius, inRadius, titles, index) {
+  this.drawTextChart = function(posY, posX, titles, index) {
     let labelArc = d3.arc()
-              .outerRadius(outRadius)
-              .innerRadius(inRadius);
+              .outerRadius(maxRadius + 100)
+              .innerRadius(maxRadius);
 
     const g = svg.selectAll('.arcLabel' + index)
           .data(this.pie(titles))
           .enter().append('g')
-          .attr('class', 'arcLabel');
+          .attr('class', 'arcLabel' + index);
 
     g.append('text')
         .attr('transform', d => 'translate(' + labelArc.centroid(d) + ')')
-        .attr('dy', '.35em')
-        .attr('dx', '-1.5em')
+        .attr('dy', posY + 'em')
+        .attr('dx', '-2em')
         .text(d => d.data);
   };
 
@@ -88,7 +88,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
 
     arMultiLineTexts.forEach((i, j) => {
       console.log('creating labels', i, j);
-      this.drawTextChart(maxRadius + 10 * (j + 2), maxRadius, i, j);
+      this.drawTextChart(j - 1, maxRadius, i, j);
     });
   };
 
@@ -97,7 +97,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
       const _cData = multilevelChart[i];
       this.drawChart(_cData, i);
     }
-    
+
     this.addTextLabel();
 
     // for(let i = 0; i < bandLength; i++) {
