@@ -5,15 +5,19 @@
 .arc path {
   stroke: #fff;
 }
-.arc2 text {
+/*.arc2 text {
   font: 10px sans-serif;
   text-anchor: middle;
 }
 .arc2 path {
   stroke: #fff;
-}
+}*/
 
 path {
   stroke: #fff;
   stroke-width: 1px;
+}
+
+.selected {
+  fill: #000 !important;
 }

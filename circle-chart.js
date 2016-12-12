@@ -4,7 +4,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
   const bandLength = bandList.length;
   const bandSize   = 100 / bandLength;
   const maxRadius  = width / 2;
-  const color      = d3.scaleOrdinal(d3.schemeCategory20c);
+  const color      = d3.scaleOrdinal(d3.schemeCategory20);
   const rtn        = {};
   let pieWidth;
   let svg = d3.select('body').append('svg')
@@ -42,7 +42,25 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     this.g = svg.selectAll('.arc' + index)
           .data(this.pie(_data))
           .enter().append('g')
-          .attr('class', 'arc' + index);
+          .attr('class', 'arc' + index)
+          .attr('id', d => 'band' + d.data.id)
+          .on('click', function(d) {
+            const idObject = $(this).attr('id');
+            const currentLevel = d.data.id;
+            bandItems = d3.selectAll('#' + idObject)._groups[0];
+
+            bandItems.forEach((item, i) => {
+              if(i <= index) {
+                d3.select(item)
+                    .select('path')
+                    .style('fill', j => d3.rgb(color(j.data.id)).brighter(1));
+              }else{
+                d3.select(item)
+                    .select('path')
+                    .style('fill', j => d3.rgb(color(j.data.id)).darker(1));
+              }
+            });
+          });
 
     this.g.append('path').attr('d', arc).style('fill', d => color(d.data.id));
 
@@ -64,7 +82,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     g.append('text')
         .attr('transform', d => 'translate(' + labelArc.centroid(d) + ')')
         .attr('dy', posY + 'em')
-        .attr('dx', '-2em')
+        .attr('dx', '-3em')
         .text(d => d.data);
   };
 
@@ -77,6 +95,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
 
       arMultiLineTexts[index].push(item);
     };
+    let paddingLine;
     // PROCURA POR QUEBRA DE LINHA
     bandList.map(x => arBandList.push(x.split('\n')));
     // AGRUPA AS LINHAS POR SUA ORDEM, EX:
@@ -86,9 +105,16 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     rtn.arBandList = arBandList;
     rtn.arMultiLineTexts = arMultiLineTexts;
 
-    arMultiLineTexts.forEach((i, j) => {
-      console.log('creating labels', i, j);
-      this.drawTextChart(j - 1, maxRadius, i, j);
+    arMultiLineTexts.forEach((i, j, k) => {
+      if(k.length < 2) {
+        paddingLine = 0;
+      } else if (k.length < 3) {
+        paddingLine = j;
+      } else {
+        paddingLine = j - 1;
+      }
+      // console.log(j,k);
+      this.drawTextChart(paddingLine, maxRadius, i, j);
     });
   };
 
