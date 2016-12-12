@@ -9,6 +9,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
   const rtn        = {};
   let pieWidth;
   let svg = d3.select('body').append('svg')
+      .attr('id', 'multipleCircleChart')
       .attr('width', 800)
       .attr('height', 800)
       .append('g')
@@ -54,10 +55,12 @@ multiLevelCircleChart = function(bandList, bandNivel) {
               if(i <= index) {
                 d3.select(item)
                     .select('path')
+                    .transition().duration(500)
                     .style('fill', j => d3.rgb(color(j.data.id)).brighter(1));
               }else{
                 d3.select(item)
                     .select('path')
+                    .transition().duration(500)
                     .style('fill', j => d3.rgb(color(j.data.id)).darker(1));
               }
             });
