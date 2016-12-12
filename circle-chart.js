@@ -5,6 +5,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
   const bandSize   = 100 / bandLength;
   const maxRadius  = width / 2;
   const color      = d3.scaleOrdinal(d3.schemeCategory20);
+  const score      = [];
   const rtn        = {};
   let pieWidth;
   let svg = d3.select('body').append('svg')
@@ -46,9 +47,9 @@ multiLevelCircleChart = function(bandList, bandNivel) {
           .attr('id', d => 'band' + d.data.id)
           .on('click', function(d) {
             const idObject = $(this).attr('id');
-            const currentLevel = d.data.id;
-            bandItems = d3.selectAll('#' + idObject)._groups[0];
-
+            const bandItems = d3.selectAll('#' + idObject)._groups[0];
+            // const indexName = d.data.id
+            score.push({id: d.data.id, value: index + 1});
             bandItems.forEach((item, i) => {
               if(i <= index) {
                 d3.select(item)
@@ -137,6 +138,8 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     multilevelChart = [];
   };
   rtn.bandList = bandList;
+  rtn.bandLength = bandLength;
+  rtn.score = score;
 
   return rtn;
 };
