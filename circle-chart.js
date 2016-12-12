@@ -56,12 +56,12 @@ multiLevelCircleChart = function(bandList, bandNivel) {
                 d3.select(item)
                     .select('path')
                     .transition().duration(500)
-                    .style('fill', j => d3.rgb(color(j.data.id)).brighter(1));
+                    .style('fill', j => d3.rgb(color(j.data.id)).brighter(0.5));
               }else{
                 d3.select(item)
                     .select('path')
                     .transition().duration(500)
-                    .style('fill', j => d3.rgb(color(j.data.id)).darker(1));
+                    .style('fill', j => d3.rgb(color(j.data.id)).darker(1.5));
               }
             });
           });
