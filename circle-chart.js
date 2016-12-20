@@ -1,20 +1,19 @@
 multiLevelCircleChart = function(chartParentNode, bandList, bandNivel) {
-  const width      = 500;
-  const height     = 500;
+  const width      = 800;
+  const height     = 800;
   const bandLength = bandList.length;
   const bandSize   = 100 / bandLength;
-  const maxRadius  = width / 2;
+  const maxRadius  = 250;
   const color      = d3.scaleOrdinal(d3.schemeCategory20);
   const score      = [];
   const rtn        = {};
   let svg = d3.select(chartParentNode).append('svg')
       .attr('id', 'multipleCircleChart')
-      .attr('width', 800)
-      .attr('height', 800)
+      .attr('width', width)
+      .attr('height', height)
       .append('g')
       .attr('transform', 'translate(' +  380 + ',' + 350 + ')');
   let multilevelChart = [];
-  let svgUri;
 
   // PRODUZ O ARRAY QUE CONTEM TODOS OS NIVEIS DO GRAFICO
   // (cada item do array eh um arco completo)
@@ -66,7 +65,6 @@ multiLevelCircleChart = function(chartParentNode, bandList, bandNivel) {
           .on('click', function(d) {
             const idObject = $(this).attr('id');
             const bandItems = d3.selectAll('#' + idObject)._groups[0];
-            // const indexName = d.data.id
             bandItems.forEach((item, i) => {
               if(i <= index) {
                 d3.select(item)
@@ -161,24 +159,12 @@ multiLevelCircleChart = function(chartParentNode, bandList, bandNivel) {
 
     // CONVERTE SVG EM URI
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source);
-
-    // ADICIONA A URI AO BOTAO DE DOWLOAD
-    
-    // A IMAGEM PODE SER BAIXADA COM O BOTAO ESQUERDO DO MOUSE
   };
 
   this.enablePrint = function() {
-    if(score.length === bandLength) {
+    if(rtn.isDone()) {
       rtn.svgUri = chartToURI();
-      document.getElementById('downloadLink').href = rtn.svgUri;
-      this.svgImage();
     }
-  };
-
-  this.svgImage = function() {
-    const image = new Image();
-    image.src = rtn.svgUri;
-    document.body.appendChild(image);
   };
 
   rtn.create = () => {
@@ -188,10 +174,6 @@ multiLevelCircleChart = function(chartParentNode, bandList, bandNivel) {
     }
 
     this.addTextLabel();
-
-    // for(let i = 0; i < bandLength; i++) {
-
-    // }
   };
 
   rtn.remove = () => {
@@ -200,13 +182,15 @@ multiLevelCircleChart = function(chartParentNode, bandList, bandNivel) {
     multilevelChart = [];
   };
 
+  rtn.buildSvgImage = function() {
+    const image = new Image();
+    image.src = rtn.svgUri;
+    document.body.appendChild(image);
+  };
+
   rtn.isDone = () => {
     return score.length === bandLength;
   };
-
-  // rtn.printChart = this.enablePrint;
-
-  // rtn.svgUri = this.svgUri;
 
   rtn.bandList = bandList;
   rtn.bandLength = bandLength;
