@@ -7,7 +7,6 @@ multiLevelCircleChart = function(bandList, bandNivel) {
   const color      = d3.scaleOrdinal(d3.schemeCategory20);
   const score      = [];
   const rtn        = {};
-  let pieWidth;
   let svg = d3.select('body').append('svg')
       .attr('id', 'multipleCircleChart')
       .attr('width', 800)
@@ -15,6 +14,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
       .append('g')
       .attr('transform', 'translate(' +  380 + ',' + 350 + ')');
   let multilevelChart = [];
+  let svgUri;
 
   // PRODUZ O ARRAY QUE CONTEM TODOS OS NIVEIS DO GRAFICO
   // (cada item do array eh um arco completo)
@@ -30,7 +30,24 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     }
   };
   this.setMultilevelChart(bandList);
-  pieWidth  = parseInt(maxRadius / multilevelChart.length) - multilevelChart.length;
+  const pieWidth  = parseInt(maxRadius / multilevelChart.length) - multilevelChart.length;
+
+  const scorePush = newScore => {
+    let foundScoredItem = -1;
+
+    score.filter((x, i) => {
+      if(x.id === newScore.id) foundScoredItem = i;
+    });
+
+    if(foundScoredItem > -1) {
+      let teste = score.splice(foundScoredItem, 1);
+      console.log(teste);
+    }
+
+    score.push(newScore);
+
+    this.enablePrint();
+  };
   // CONSTROI UM NIVEL(ARCO/DONUT CHART) DO GRAFICO
   this.drawChart = function(_data, index) {
     this.pie = d3.pie()
@@ -50,7 +67,7 @@ multiLevelCircleChart = function(bandList, bandNivel) {
             const idObject = $(this).attr('id');
             const bandItems = d3.selectAll('#' + idObject)._groups[0];
             // const indexName = d.data.id
-            score.push({id: d.data.id, value: index + 1});
+            scorePush({id: d.data.id, value: index + 1});
             bandItems.forEach((item, i) => {
               if(i <= index) {
                 d3.select(item)
@@ -122,6 +139,41 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     });
   };
 
+  const chartToURI = () => {
+    console.log('print chart');
+    const svgChart = document.getElementById('multipleCircleChart');
+
+    // SERIALIZA O GRAFICO
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svgChart);
+
+    // ADICIONA NAMESPACE
+    if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+      source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
+      source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+    }
+
+    // DECLARACAO XML
+    source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+
+    // CONVERTE SVG EM URI
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(source);
+
+    // ADICIONA A URI AO BOTAO DE DOWLOAD
+    
+    // A IMAGEM PODE SER BAIXADA COM O BOTAO ESQUERDO DO MOUSE
+  };
+
+  this.enablePrint = function() {
+    if(score.length === bandLength) {
+      rtn.svgUri = chartToURI();
+      TESTE = chartToURI();
+      document.getElementById('downloadLink').href = rtn.svgUri;
+    }
+  };
+
   rtn.create = () => {
     for(let i = 0; i < multilevelChart.length; i++) {
       const _cData = multilevelChart[i];
@@ -140,6 +192,11 @@ multiLevelCircleChart = function(bandList, bandNivel) {
 
     multilevelChart = [];
   };
+
+  // rtn.printChart = this.enablePrint;
+
+  // rtn.svgUri = this.svgUri;
+
   rtn.bandList = bandList;
   rtn.bandLength = bandLength;
   rtn.score = score;
