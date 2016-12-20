@@ -67,7 +67,6 @@ multiLevelCircleChart = function(bandList, bandNivel) {
             const idObject = $(this).attr('id');
             const bandItems = d3.selectAll('#' + idObject)._groups[0];
             // const indexName = d.data.id
-            scorePush({id: d.data.id, value: index + 1});
             bandItems.forEach((item, i) => {
               if(i <= index) {
                 d3.select(item)
@@ -81,6 +80,8 @@ multiLevelCircleChart = function(bandList, bandNivel) {
                     .style('fill', j => d3.rgb(color(j.data.id)).darker(1.5));
               }
             });
+            setTimeout(() => scorePush({id: d.data.id, value: index + 1})
+              , 550);
           });
 
     this.g.append('path').attr('d', arc).style('fill', d => color(d.data.id));
@@ -170,8 +171,18 @@ multiLevelCircleChart = function(bandList, bandNivel) {
     if(score.length === bandLength) {
       rtn.svgUri = chartToURI();
       TESTE = chartToURI();
+      console.log('enablePrint', score);
       document.getElementById('downloadLink').href = rtn.svgUri;
+      this.svgImage();
     }
+  };
+
+  this.svgImage = function() {
+    console.log('svg image');
+    const image = new Image();
+    image.src = rtn.svgUri;
+    document.body.appendChild(image);
+    console.log('image', image);
   };
 
   rtn.create = () => {
