@@ -16,9 +16,19 @@
     
   </div>
   <script type="text/javascript">
+    const callback = () => {
+      const uri = a.svgUri;
+      const image = new Image();
+
+      image.src = uri;
+      
+      document.body.appendChild(image);
+      alert('finalizado!');
+    };
     // const a = multiLevelCircleChart(['naruto sasuke\n itachi kankuro\n temari gaara', 'gatos cachorros \npassaram\n voam', 'inalador bronquit\n osmose epatica \n arroz feijao', 'latinha \ncarrinho de mao\n papa', 'cinzeiro fumo\n loucura brisa\n alou meu pai', 'ipad tecnologia\n beleza\n purissima breja', 'caderno taynah\ncaneta caio\nxixi carin'], 5);
     // const a = multiLevelCircleChart(['naruto', 'vida morte', 'arroz feijao bife','credo pai', 'cerveja vinho cevada', 'claro escuro'], 5)
-    const a = new MultiLevelCircleChart('.circle-chart', ['naruto sasuke\nitachi konohamaru', 'vida morte\nsuicidio homicidio', 'cerveja cevada\ncachaca agua', 'arroz feijao\nfrango macarrao', 'claro escuro\nluz ausencia', 'teste outro\nateh bom'], 5).create();
+    const a = new MultiLevelCircleChart('.circle-chart', ['naruto sasuke\nitachi konohamaru', 'vida morte\nsuicidio homicidio', 'cerveja cevada\ncachaca agua', 'arroz feijao\nfrango macarrao', 'claro escuro\nluz ausencia', 'teste outro\nateh bom'], 5).create()
+      .promiseWhenDone(callback);
   </script>
 </body>
 </html>

@@ -185,6 +185,8 @@ MultiLevelCircleChart = function(chartParentNode, bandList, bandNivel) {
     $('g').remove();
 
     multilevelChart.splice(0, multilevelChart.length);
+
+    return rtn;
   };
 
   rtn.buildSvgImage = function() {
