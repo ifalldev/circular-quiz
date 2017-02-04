@@ -1,4 +1,4 @@
-#Multi Level Circle Chart - beta
+#Circular quiz - beta
 Crie questionarios circulares com respostas numéricas dinâmicamente.
 ###Portabilidade
 Deixei as dependências livres dentro do repositório para fácil manejo para quem não utiliza `Bower` 
