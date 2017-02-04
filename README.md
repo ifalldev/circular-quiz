@@ -4,7 +4,7 @@ Crie questionarios circulares com respostas numéricas dinâmicamente.
 Deixei as dependências livres dentro do repositório para fácil manejo para quem não utiliza `Bower` 
 ##Iniciando
 ```
-$ git clone https://github.com/ifalldev/d3-chart.git
+$ git clone https://github.com/ifalldev/circular-quiz.git
 $ bower i
 ```
 ###Dependências
